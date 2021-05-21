@@ -43,6 +43,10 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("result: \(vm.dataResult[indexPath.row])")
+    }
+
 }
 
 extension ListViewController: ListViewControllerDelegate {

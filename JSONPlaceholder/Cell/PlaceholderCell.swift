@@ -21,7 +21,8 @@ class PlaceholderCell: UITableViewCell {
     }
 
     private func setupUI() {
-
+        self.selectionStyle = .none
+        
         placeholderTitle.numberOfLines = 0
         placeholderTitle.textAlignment = .center
         self.addSubview(placeholderImageView)
