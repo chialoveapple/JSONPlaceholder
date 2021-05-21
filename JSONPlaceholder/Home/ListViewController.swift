@@ -11,11 +11,13 @@ class ListViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     let vm = ListVM()
+    var searchController: UISearchController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         initTableView()
+        setSearchController()
         getListData()
         vm.delegate = self
     }
@@ -29,24 +31,51 @@ class ListViewController: UIViewController {
         vm.getListData()
     }
 
+    private func setSearchController() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController?.searchResultsUpdater = self
+        searchController?.searchBar.delegate = self
+        searchController?.hidesNavigationBarDuringPresentation = false
+        searchController?.obscuresBackgroundDuringPresentation = false
+        self.navigationItem.searchController = searchController
+    }
 }
 
 extension ListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return vm.dataResult.count
+        return vm.searchResult.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PlaceholderCell.className, for: indexPath) as! PlaceholderCell
-        cell.updateCellWith(object: vm.dataResult[indexPath.row])
+        cell.updateCellWith(object: vm.searchResult[indexPath.row])
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("result: \(vm.dataResult[indexPath.row])")
+        searchController?.searchBar.resignFirstResponder()
+        print("result: \(vm.searchResult[indexPath.row])")
     }
 
+}
+
+extension ListViewController: UISearchBarDelegate {
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let searchText = searchBar.text {
+            vm.search(text: searchText)
+        }
+    }
+
+}
+
+extension ListViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        if let searchText = searchController.searchBar.text {
+            vm.search(text: searchText)
+        }
+    }
 }
 
 extension ListViewController: ListViewControllerDelegate {
