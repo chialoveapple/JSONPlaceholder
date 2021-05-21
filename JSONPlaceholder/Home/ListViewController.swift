@@ -12,6 +12,12 @@ class ListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     let vm = ListVM()
     var searchController: UISearchController?
+    var emptyView: UILabel {
+        let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height))
+        emptyLabel.text = "查無資料"
+        emptyLabel.textAlignment = .center
+        return emptyLabel
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +63,6 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource {
         searchController?.searchBar.resignFirstResponder()
         print("result: \(vm.searchResult[indexPath.row])")
     }
-
 }
 
 extension ListViewController: UISearchBarDelegate {
@@ -67,7 +72,6 @@ extension ListViewController: UISearchBarDelegate {
             vm.search(text: searchText)
         }
     }
-
 }
 
 extension ListViewController: UISearchResultsUpdating {
@@ -81,7 +85,13 @@ extension ListViewController: UISearchResultsUpdating {
 extension ListViewController: ListViewControllerDelegate {
     func reloadDataResult() {
         DispatchQueue.main.async {
+            if self.vm.searchResult.isEmpty {
+                self.tableView.backgroundView = self.emptyView
+            } else {
+                self.tableView.backgroundView = nil
+            }
             self.tableView.reloadData()
         }
     }
+
 }
